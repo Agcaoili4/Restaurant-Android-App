@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.restaurantapp.ui.theme.RestaurantAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,25 +20,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RestaurantAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    RestaurantApp(
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    RestaurantApp()
                 }
             }
         }
     }
-}
-
-@Composable
-fun RestaurantApp(modifier: Modifier = Modifier) {
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    RestaurantAppTheme {
-        RestaurantApp()
-    }
-}
