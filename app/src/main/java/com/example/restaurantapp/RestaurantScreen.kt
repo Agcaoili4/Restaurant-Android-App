@@ -1,5 +1,6 @@
 package com.example.restaurantapp
 
+import android.annotation.SuppressLint
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +30,7 @@ import com.example.restaurantapp.uiScreen.CustomerPayment
 import com.example.restaurantapp.uiScreen.CustomerViewOrder
 import com.example.restaurantapp.uiScreen.CustomerWelcome
 import com.example.restaurantapp.uiScreen.StartAppScreen
+import com.example.restaurantapp.uiScreen.components.RestaurantAppBar
 
 
 enum class RestaurantScreen(@StringRes val title: Int) {
@@ -40,32 +42,9 @@ enum class RestaurantScreen(@StringRes val title: Int) {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun RestaurantAppBar(
-    currentScreen: RestaurantScreen,
-    canNavigateBack: Boolean,
-    navigateUp: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    TopAppBar(
-        title = { Text(stringResource(id = currentScreen.title)) },
-        colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
-        modifier = modifier,
-//        navigationIcon = {
-//            if (canNavigateBack) {
-//                IconButton(onClick = navigateUp) {
-//                    Icon(
-//                        imageVector = Icons.Filled.ArrowBack,
-//                        contentDescription = stringResource(R.string.back_button)
-//                    )
-//                }
-//            }
-//        }
-    )
-}
 
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun RestaurantApp(
     navController: NavHostController = rememberNavController()
@@ -74,59 +53,46 @@ fun RestaurantApp(
     val currentScreen = RestaurantScreen.valueOf(
         backStackEntry?.destination?.route ?: RestaurantScreen.Start.name
     )
-    Scaffold(
-        topBar = {
-            RestaurantAppBar(
-                currentScreen = currentScreen,
-                canNavigateBack = navController.previousBackStackEntry != null,
-                navigateUp = {
-                    navController.navigateUp()
-                }
+    NavHost(
+        navController = navController,
+        startDestination = RestaurantScreen.Start.name,
+    ) {
+
+        composable(route = RestaurantScreen.Start.name) {
+            StartAppScreen(
+                modifier = Modifier.fillMaxSize(),
+                onTempYositaButton = { navController.navigate(RestaurantScreen.Customer_Welcome.name) }
             )
         }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = RestaurantScreen.Start.name,
-            modifier = Modifier.padding(innerPadding)
-        ) {
 
-            composable(route = RestaurantScreen.Start.name) {
-                StartAppScreen(
-                    modifier = Modifier.fillMaxSize(),
-                    onTempYositaButton = { navController.navigate(RestaurantScreen.Customer_Welcome.name) }
-                )
-            }
+        composable(route = RestaurantScreen.Customer_Welcome.name) {
+            CustomerWelcome(
+                modifier = Modifier.fillMaxSize(),
+                OnStartOrderClicked = { navController.navigate(RestaurantScreen.Customer_MenuList.name) }
+            )
+        }
 
-            composable(route = RestaurantScreen.Customer_Welcome.name) {
-                CustomerWelcome(
-                    modifier = Modifier.fillMaxSize(),
-                    OnStartOrderClicked = { navController.navigate(RestaurantScreen.Customer_MenuList.name) }
-                )
-            }
+        composable(route = RestaurantScreen.Customer_MenuList.name) {
+            CustomerMenuList(
+                modifier = Modifier.fillMaxSize(),
+                onBillClicked = { navController.navigate(RestaurantScreen.Customer_Payment.name) },
+                onViewOrderClicked = { navController.navigate(RestaurantScreen.Customer_ViewOrder.name) }
+            )
+        }
 
-            composable(route = RestaurantScreen.Customer_MenuList.name) {
-                CustomerMenuList(
-                    modifier = Modifier.fillMaxSize(),
-                    onBillClicked = { navController.navigate(RestaurantScreen.Customer_Payment.name) },
-                    onViewOrderClicked = { navController.navigate(RestaurantScreen.Customer_ViewOrder.name) }
-                )
-            }
+        composable(route = RestaurantScreen.Customer_ViewOrder.name) {
+            CustomerViewOrder(
+                modifier = Modifier.fillMaxSize(),
+                onBillClicked = { navController.navigate(RestaurantScreen.Customer_Payment.name) },
+                onPlaceOrderClicked = { navController.navigate(RestaurantScreen.Customer_MenuList.name) }
+            )
+        }
 
-            composable(route = RestaurantScreen.Customer_ViewOrder.name) {
-                CustomerViewOrder(
-                    modifier = Modifier.fillMaxSize(),
-                    onBillClicked = { navController.navigate(RestaurantScreen.Customer_Payment.name) },
-                    onPlaceOrderClicked = { navController.navigate(RestaurantScreen.Customer_MenuList.name) }
-                )
-            }
-
-            composable(route = RestaurantScreen.Customer_Payment.name) {
-                CustomerPayment(
-                    modifier = Modifier.fillMaxSize(),
-                    onPayClicked = { navController.navigate(RestaurantScreen.Customer_ViewOrder.name) }
-                )
-            }
+        composable(route = RestaurantScreen.Customer_Payment.name) {
+            CustomerPayment(
+                modifier = Modifier.fillMaxSize(),
+                onPayClicked = { navController.navigate(RestaurantScreen.Customer_ViewOrder.name) }
+            )
         }
     }
 }

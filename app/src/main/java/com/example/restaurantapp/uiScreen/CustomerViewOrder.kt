@@ -18,7 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.restaurantapp.RestaurantApp
 import com.example.restaurantapp.uiScreen.components.CustomerBottomAppBar
+import com.example.restaurantapp.uiScreen.components.RestaurantAppBar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -28,6 +30,9 @@ fun CustomerViewOrder(
     onPlaceOrderClicked: () -> Unit
 ) {
     Scaffold(
+        topBar = {
+            RestaurantAppBar()
+        },
         bottomBar = {
             CustomerBottomAppBar(
                 modifier = Modifier,
@@ -37,8 +42,12 @@ fun CustomerViewOrder(
                 Icons.Filled.Check
             )
         }
-    ) {
-        Column { Text("Vieworder") }
+    ) { innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
+            Column(modifier = Modifier.padding(8.dp)) {
+                Text("Vieworder")
+            }
+        }
     }
 
 }
