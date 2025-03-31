@@ -24,6 +24,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
@@ -42,6 +43,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
@@ -93,18 +95,15 @@ fun CustomerMenuList(
             )
         }
     ) { innerPadding ->
-        Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-            Column(modifier=Modifier.padding(8.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            Column(modifier = Modifier.padding(8.dp)) {
                 Text("Table: $tableNumber")
-                CategorySelection()
-                val radioOptions = listOf("All", "Appetizer", "Main dish", "Dessert", "Drink")
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(150.dp),
-                ) {
-                    items(5) { index ->
-                        ElevatedCardExample(index)
-                    }
-                }
+                CategoryTab()
+                Menu()
             }
 
         }
@@ -113,7 +112,7 @@ fun CustomerMenuList(
 
 
 @Composable
-fun CategorySelection(modifier: Modifier = Modifier) {
+fun CategoryTab(modifier: Modifier = Modifier) {
     val radioOptions = listOf("All", "Appetizer", "Main dish", "Dessert", "Drink")
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
     // Note that Modifier.selectableGroup() is essential to ensure correct accessibility behavior
@@ -133,8 +132,18 @@ fun CategorySelection(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ElevatedCardExample(index: Int) {
+fun Menu() {
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(150.dp),
+    ) {
+        items(5) { index ->
+            MenuItem(index)
+        }
+    }
+}
 
+@Composable
+fun MenuItem(index: Int) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 1.dp
@@ -166,8 +175,13 @@ fun ElevatedCardExample(index: Int) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = "Price$$", modifier = Modifier)
-                Button(onClick = {}) {
-                    Icon(Icons.Filled.Add, contentDescription = null)
+                IconButton(onClick = {},
+                    colors = IconButtonColors(Color.White, MaterialTheme.colorScheme.primaryContainer, Color.Black,Color.Black)
+                   ) {
+                    Icon(
+                        Icons.Filled.Add,
+                        contentDescription = null
+                    )
                 }
             }
         }

@@ -1,6 +1,7 @@
 package com.example.restaurantapp.uiScreen.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,20 +32,20 @@ fun CustomerBottomAppBar(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-
                 IconButton(onClick = { /* do something */ }) {
                     Icon(
                         Icons.Filled.Notifications,
                         contentDescription = "Localized description",
                     )
                 }
+
                 Button(
                     onClick = onBillClicked,
                     modifier = Modifier
                         .padding(horizontal = 8.dp, vertical = 0.dp)
                 ) {
                     Icon(Icons.Filled.Star, null)
-                    Text("  Bill")
+                    Text(" Bill")
                 }
 
                 Button(
