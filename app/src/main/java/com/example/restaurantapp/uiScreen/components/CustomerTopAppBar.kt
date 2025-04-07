@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.restaurantapp.R
-import com.example.restaurantapp.RestaurantScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,4 +1,4 @@
-package com.example.restaurantapp.uiScreen
+package com.example.restaurantapp.uiScreen.CustomerScreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.restaurantapp.uiScreen.ViewModel
 
 @Composable
 fun CustomerWelcome(
