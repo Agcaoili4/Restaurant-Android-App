@@ -12,17 +12,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.restaurantapp.uiScreen.ViewModel
 
 @Composable
 fun CustomerWelcome(
     modifier: Modifier,
-    viewModel: ViewModel = ViewModel(),
-    OnStartOrderClicked: () -> Unit
+    OnStartOrderClicked: () -> Unit,
+    viewModel: ViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var tableNumber = uiState.tableNumber
-
+    val tableNumber = uiState.tableNumber
     Column(
         modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,

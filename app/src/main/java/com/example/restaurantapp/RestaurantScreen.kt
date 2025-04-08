@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,6 +28,7 @@ import com.example.restaurantapp.uiScreen.logInOwnerScreen.UserPreferences
 import com.example.restaurantapp.uiScreen.OwnerMenuAndSettingsScreen.OwnerMenuAddScreen
 import com.example.restaurantapp.uiScreen.OwnerMenuAndSettingsScreen.OwnerMenuUpdateScreen
 import com.example.restaurantapp.uiScreen.OwnerMenuAndSettingsScreen.OwnerSettingScreen
+import com.example.restaurantapp.uiScreen.ViewModel
 
 // Updated enum: all enum constants still use resource IDs positionally.
 enum class RestaurantScreen(@StringRes val title: Int) {
@@ -38,7 +40,7 @@ enum class RestaurantScreen(@StringRes val title: Int) {
     Customer_MenuList(R.string.app_name),
     Customer_ViewOrder(R.string.app_name),
     Customer_Payment(R.string.app_name),
-    StartApp(R.string.app_name),  // We still keep this if needed.
+    Customer_SetTable(title = R.string.app_name),
     Owner_MenuAdd(R.string.app_name),
     Owner_MenuUpdate(R.string.app_name),
     Owner_Settings(R.string.app_name)
@@ -48,7 +50,8 @@ enum class RestaurantScreen(@StringRes val title: Int) {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun RestaurantApp(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    viewModel: ViewModel = viewModel()
 ) {
     // Retrieve the current back stack entry to determine which route is active.
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -88,7 +91,7 @@ fun RestaurantApp(
             TransitionScreen(
                 select = { selection ->
                     if (selection == "Table Number") {
-                        navController.navigate(RestaurantScreen.StartApp.name)
+                        navController.navigate(RestaurantScreen.Customer_SetTable.name)
                     } else {
                         navController.navigate(RestaurantScreen.Owner_Password.name)
                     }
@@ -108,40 +111,72 @@ fun RestaurantApp(
                 errorMessage = errorMessage
             )
         }
-        // Use the updated StartCustomerScreen for customer start
-        composable(route = RestaurantScreen.StartApp.name) {
+
+
+
+        // -- Start yosita part
+        // Customer SetTable screen
+        composable(route = RestaurantScreen.Customer_SetTable.name) {
             StartCustomerScreen(
                 modifier = Modifier.fillMaxSize(),
+                viewModel = viewModel,
                 onTempYositaButton = { navController.navigate(RestaurantScreen.Customer_Welcome.name) },
-                onSimranPartButton = { navController.navigate(RestaurantScreen.Owner_MenuAdd.name) }
+                onSimranPartButton = {}
             )
         }
+
+        // Customer Welcome Screen
         composable(route = RestaurantScreen.Customer_Welcome.name) {
             CustomerWelcome(
                 modifier = Modifier.fillMaxSize(),
+                viewModel = viewModel,
                 OnStartOrderClicked = { navController.navigate(RestaurantScreen.Customer_MenuList.name) }
             )
         }
+
+        // Customer Menu Screen
         composable(route = RestaurantScreen.Customer_MenuList.name) {
             CustomerMenuList(
                 modifier = Modifier.fillMaxSize(),
+                viewModel = viewModel,
                 onBillClicked = { navController.navigate(RestaurantScreen.Customer_Payment.name) },
-                onViewOrderClicked = { navController.navigate(RestaurantScreen.Customer_ViewOrder.name) }
+                onViewOrderClicked = { navController.navigate(RestaurantScreen.Customer_ViewOrder.name) },
+                onCallwaiterClicked = {},
+                onMenuClicked = { navController.navigate(RestaurantScreen.Customer_MenuList.name) }
             )
         }
+
+        // Customer View Order Screen
         composable(route = RestaurantScreen.Customer_ViewOrder.name) {
             CustomerViewOrder(
                 modifier = Modifier.fillMaxSize(),
+                viewModel = viewModel,
                 onBillClicked = { navController.navigate(RestaurantScreen.Customer_Payment.name) },
-                onPlaceOrderClicked = { navController.navigate(RestaurantScreen.Customer_MenuList.name) }
+                onViewOrderClicked = { navController.navigate(RestaurantScreen.Customer_ViewOrder.name) },
+                onCallwaiterClicked = {},
+                onMenuClicked = { navController.navigate(RestaurantScreen.Customer_MenuList.name) },
+                onPlaceorderClicked = {}
             )
         }
+
+        // Customer Payment Screen
         composable(route = RestaurantScreen.Customer_Payment.name) {
             CustomerPayment(
                 modifier = Modifier.fillMaxSize(),
-                onPayClicked = { navController.navigate(RestaurantScreen.Customer_ViewOrder.name) }
+                viewModel = viewModel,
+                onBillClicked = { navController.navigate(RestaurantScreen.Customer_Payment.name) },
+                onViewOrderClicked = { navController.navigate(RestaurantScreen.Customer_ViewOrder.name) },
+                onCallwaiterClicked = {},
+                onMenuClicked = { navController.navigate(RestaurantScreen.Customer_MenuList.name) },
+                onPayClicked = { navController.navigate(RestaurantScreen.Customer_SetTable.name)
+                    viewModel.resetTable()}
             )
         }
+        // -- End yosita part
+
+
+
+
         // --- New Routes for Owner (Simran's Part) ---
         // Owner Menu Add Screen
         composable(route = RestaurantScreen.Owner_MenuAdd.name) {

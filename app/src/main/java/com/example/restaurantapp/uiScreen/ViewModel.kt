@@ -12,11 +12,22 @@ class ViewModel :ViewModel() {
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
+
+    fun setBottomBar(bottomBar: Int) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                bottomBar = bottomBar
+            )
+
+        }
+    }
+
     fun setTableNumber(tableNumber: Int) {
         _uiState.update { currentState ->
             currentState.copy(
                 tableNumber=tableNumber
             )
+
         }
     }
 
@@ -26,7 +37,7 @@ class ViewModel :ViewModel() {
             updatedOrderList.add(Order(menuId, quantity))
             currentState.copy(
                 orderList = updatedOrderList
-        ) }
+            ) }
     }
 
     fun resetOrderList(){

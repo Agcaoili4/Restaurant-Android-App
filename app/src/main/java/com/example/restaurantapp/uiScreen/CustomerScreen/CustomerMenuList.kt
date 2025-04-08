@@ -35,6 +35,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.restaurantapp.R
 import com.example.restaurantapp.uiScreen.ViewModel
 import com.example.restaurantapp.uiScreen.components.CustomerBottomAppBar
@@ -44,9 +45,11 @@ import com.example.restaurantapp.uiScreen.components.RestaurantAppBar
 @Composable
 fun CustomerMenuList(
     modifier: Modifier,
-    viewModel: ViewModel = ViewModel(),
+    viewModel: ViewModel,
+    onBillClicked: () -> Unit,
     onViewOrderClicked: () -> Unit,
-    onBillClicked: () -> Unit
+    onCallwaiterClicked: () -> Unit,
+    onMenuClicked: () -> Unit,
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
@@ -55,15 +58,18 @@ fun CustomerMenuList(
 
     Scaffold(
         topBar = {
-            RestaurantAppBar()
+            RestaurantAppBar(tableNumber)
         },
         bottomBar = {
             CustomerBottomAppBar(
                 modifier = Modifier,
-                onBillClicked,
-                onViewOrderClicked,
+                onBillClicked = onBillClicked,
+                onViewOrderClicked = onViewOrderClicked,
+                onCallwaiterClicked = onCallwaiterClicked,
+                onMenuClicked = onMenuClicked,
                 "View Order",
-                Icons.Filled.ShoppingCart
+                Icons.Filled.ShoppingCart,
+                viewModel = viewModel
             )
         }
     ) { innerPadding ->
@@ -72,8 +78,12 @@ fun CustomerMenuList(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            Column(modifier = Modifier.padding(8.dp)) {
-                Text("Table: $tableNumber")
+            Column(modifier = Modifier.padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 0.dp)) {
+                Text(
+                    text = "Our Menu",
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier.padding(5.dp)
+                )
                 CategoryTab()
                 Menu()
             }
@@ -147,9 +157,15 @@ fun MenuItem(index: Int) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = "Price$$", modifier = Modifier)
-                IconButton(onClick = {},
-                    colors = IconButtonColors(Color.White, MaterialTheme.colorScheme.primaryContainer, Color.Black,Color.Black)
-                   ) {
+                IconButton(
+                    onClick = {},
+                    colors = IconButtonColors(
+                        Color.White,
+                        MaterialTheme.colorScheme.primaryContainer,
+                        Color.Black,
+                        Color.Black
+                    )
+                ) {
                     Icon(
                         Icons.Filled.Add,
                         contentDescription = null
