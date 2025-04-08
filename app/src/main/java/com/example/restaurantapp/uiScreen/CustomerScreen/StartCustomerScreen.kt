@@ -10,17 +10,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun StartAppScreen(
+fun StartCustomerScreen(
     modifier: Modifier,
-    onTempYositaButton: () -> Unit
+    onTempYositaButton: () -> Unit,
+    onSimranPartButton: () -> Unit
 ) {
-
-        Column(        modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center) {
-            Text("Login page")
-            Button(onClick = onTempYositaButton) {
-                Text("Go to Yosita part")
-            }
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Login page")
+        Button(onClick = onTempYositaButton) {
+            Text("Go to Yosita part")
+        }
+        Button(onClick = onSimranPartButton) {
+            Text("Go to Simran part")
         }
     }
+}
