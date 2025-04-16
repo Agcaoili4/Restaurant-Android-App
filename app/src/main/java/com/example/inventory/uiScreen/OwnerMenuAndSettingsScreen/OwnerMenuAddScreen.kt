@@ -78,7 +78,19 @@ fun OwnerMenuAddScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             Button(
-                onClick = onMenuAdded,
+                onClick = {
+                    databaseViewModel.insertMenu(
+                        Menu(
+                            ownerId = 1,
+                            name = menuName.text,
+                            category = category.text,
+                            description = description.text,
+                            price = price.text.toDoubleOrNull() ?: 0.0,
+                            image = imageUrl.text
+                        )
+                    )
+                    onMenuAdded()
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7B3C92)),
                 shape = RoundedCornerShape(50),
                 modifier = Modifier

@@ -75,6 +75,19 @@ class DatabaseViewModel(private val repository: AppRepository) : ViewModel() {
         return repository.getMenuByCategory(ownerId, category)
     }
 
+    // Menu operations-----------------------------------------------
+    fun updateMenu(menu: Menu) {
+        viewModelScope.launch {
+            repository.updateMenu(menu)
+        }
+    }
+
+    fun deleteMenu(menu: Menu) {
+        viewModelScope.launch {
+            repository.deleteMenu(menu)
+        }
+    }
+
 
     // Order Query---------------------------------------------------
     val orders = repository.getAllOrders()

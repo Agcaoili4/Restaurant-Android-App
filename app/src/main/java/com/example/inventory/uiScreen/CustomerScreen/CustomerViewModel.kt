@@ -71,6 +71,15 @@ class CustomerViewModel : ViewModel() {
         }
     }
 
+    /** Remove a specific item from the current order list */
+    fun removeOrderListItem(item: OrderDetail) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                currentOrderList = currentState.currentOrderList.filterNot { it == item }
+            )
+        }
+    }
+
     fun resetOrderList() {
         _uiState.update { currentState ->
             currentState.copy(
