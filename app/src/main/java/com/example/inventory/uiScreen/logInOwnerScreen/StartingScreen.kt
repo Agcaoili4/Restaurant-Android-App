@@ -107,6 +107,7 @@ fun LoginScreen(
                         if (owner != null && owner!!.password == password) {
                             // Valid credentials
 //                        preference.setLoggedIn(true)
+                            customerViewModel.setPassword(password)
                             customerViewModel.setCurrentOwnerId(owner!!.ownerId)
                             navController.navigate(RestaurantScreen.Owner_Transition.name)
                         } else {

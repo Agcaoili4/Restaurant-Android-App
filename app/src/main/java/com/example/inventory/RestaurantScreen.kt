@@ -64,7 +64,7 @@ fun RestaurantApp(
     val startDestination = RestaurantScreen.Start.name
 
     val customerUiState by customerViewModel.uiState.collectAsState()
-
+    val currentPassword = customerUiState.currentPassword
     // Shared OwnerMenuViewModel to hold the selected menu for editing.
     val ownerMenuViewModel: OwnerMenuViewModel = viewModel()
 
@@ -117,7 +117,7 @@ fun RestaurantApp(
             OwnerPasswordScreen(
                 navController = navController,
                 enterPassword = { password ->
-                    if (password == "password123") {
+                    if (password == currentPassword) {
                         navController.navigate(RestaurantScreen.Owner_MenuList.name) {
                             popUpTo(RestaurantScreen.Owner_Password.name) { inclusive = true }
                         }

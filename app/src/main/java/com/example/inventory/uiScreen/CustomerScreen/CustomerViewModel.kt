@@ -17,7 +17,14 @@ class CustomerViewModel : ViewModel() {
             currentState.copy(
                 bottomBar = bottomBar
             )
+        }
+    }
 
+    fun setPassword(password: String) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                currentPassword = password
+            )
         }
     }
 
@@ -71,6 +78,17 @@ class CustomerViewModel : ViewModel() {
         }
     }
 
+    fun removeOrderList(menuId:Int){
+        _uiState.update { currentState ->
+            val updatedOrderList = currentState.currentOrderList.toMutableList()
+            val index = updatedOrderList.indexOfFirst { it.menuId == menuId }
+            updatedOrderList.removeAt(index)
+            currentState.copy(
+                currentOrderList = updatedOrderList
+            )
+        }
+    }
+
     fun resetOrderList() {
         _uiState.update { currentState ->
             currentState.copy(
@@ -90,6 +108,7 @@ class CustomerViewModel : ViewModel() {
                 currentTotalPrice = 0.0,
                 currentOrderList = emptyList(),
                 bottomBar = 1,
+                currentPassword = ""
                 )
         }
     }
