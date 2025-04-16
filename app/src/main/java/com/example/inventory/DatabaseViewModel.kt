@@ -11,26 +11,19 @@ import com.example.inventory.data.OrderDetail
 import com.example.inventory.data.Owner
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.Locale.Category
 
 class DatabaseViewModel(private val repository: AppRepository) : ViewModel() {
 
-    // Owner Query--------------------------------------------------
+    // Owner Query
     val owners = repository.getAllOwners()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     fun getOwnerByEmail(email: String): Flow<Owner?> {
         return repository.getOwnerByEmail(email)
-            .stateIn(
-                viewModelScope,
-                SharingStarted.Lazily,
-                null // initial value
-            )
+            .stateIn(viewModelScope, SharingStarted.Lazily, null)
     }
 
     fun insertOwner(owner: Owner) {
@@ -39,8 +32,7 @@ class DatabaseViewModel(private val repository: AppRepository) : ViewModel() {
         }
     }
 
-
-    // Customer Query-----------------------------------------------
+    // Customer Query
     val customer = repository.getAllCustomers()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
@@ -52,14 +44,13 @@ class DatabaseViewModel(private val repository: AppRepository) : ViewModel() {
 
     suspend fun getCustomerById(customerId: Int): Customer? {
         return repository.getCustomerById(customerId).firstOrNull()
-
     }
 
-
-    // Menu Query---------------------------------------------------
+    // Menu Query
     fun insertMenu(menu: Menu) {
         viewModelScope.launch {
             repository.insertMenu(menu)
+            println("Inserted new menu: ${menu.name} for ownerId: ${menu.ownerId}")
         }
     }
 
@@ -75,8 +66,21 @@ class DatabaseViewModel(private val repository: AppRepository) : ViewModel() {
         return repository.getMenuByCategory(ownerId, category)
     }
 
+    fun updateMenu(menu: Menu) {
+        viewModelScope.launch {
+            repository.updateMenu(menu)
+            println("Updated menu: ${menu.name}")
+        }
+    }
 
-    // Order Query---------------------------------------------------
+    fun deleteMenu(menu: Menu) {
+        viewModelScope.launch {
+            repository.deleteMenu(menu)
+            println("Deleted menu: ${menu.name}")
+        }
+    }
+
+    // Order Query
     val orders = repository.getAllOrders()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
@@ -86,11 +90,8 @@ class DatabaseViewModel(private val repository: AppRepository) : ViewModel() {
         }
     }
 
-
-    // Order details Query-------------------------------------------
-    fun orderdetalis(orderId: Int): Flow<List<OrderDetail>> {
-        return repository.getAllOrderDetails(orderId)
-    }
+    // Order Detail Query
+    fun orderdetalis(orderId: Int) = repository.getAllOrderDetails(orderId)
 
     fun insertOrderDetail(orderDetail: OrderDetail) {
         viewModelScope.launch {
@@ -98,10 +99,7 @@ class DatabaseViewModel(private val repository: AppRepository) : ViewModel() {
         }
     }
 
-
-
-
-    // Notification Query----------------------------------------------
+    // Notification Query
     val notifications = repository.getAllNotification()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
@@ -111,36 +109,34 @@ class DatabaseViewModel(private val repository: AppRepository) : ViewModel() {
         }
     }
 
-
-    // Insert mockup data------------------------------------------
+    // Insert Starter Data:
+    // This function inserts sample owners and menus into the database.
     fun insertStarterData() {
         viewModelScope.launch {
-
-            // insert sample owner
+            // Insert sample owners
             repository.insertOwner(
                 Owner(
                     email = "sushi@food.ca",
                     password = "1234",
-                    restaurantName = "sushi go"
+                    restaurantName = "Sushi Go"
                 )
             )
             repository.insertOwner(
                 Owner(
                     email = "pizza@food.ca",
                     password = "1234",
-                    restaurantName = "pizza go"
+                    restaurantName = "Pizza Go"
                 )
             )
             repository.insertOwner(
                 Owner(
                     email = "chick@food.ca",
                     password = "1234",
-                    restaurantName = "chicken go"
+                    restaurantName = "Chicken Go"
                 )
             )
 
-            // insert sample menu
-            // sushi
+            // Insert sample menus for ownerId 1 (Sushi Go)
             repository.insertMenu(
                 Menu(
                     ownerId = 1,
@@ -159,16 +155,6 @@ class DatabaseViewModel(private val repository: AppRepository) : ViewModel() {
                     description = "Freshly sliced salmon served with wasabi and soy sauce",
                     price = 12.00,
                     image = "https://lenaskitchenblog.com/wp-content/uploads/2021/08/Salmon-Sushi-8.jpg"
-                )
-            )
-            repository.insertMenu(
-                Menu(
-                    ownerId = 1,
-                    name = "Tempura Udon",
-                    category = "MainDish",
-                    description = "Thick udon noodles in broth with shrimp tempura",
-                    price = 10.75,
-                    image = "https://www.chopstickchronicles.com/wp-content/uploads/2020/06/Tempura-Udon-update-18-e1738984922859.jpg"
                 )
             )
             repository.insertMenu(
@@ -212,7 +198,7 @@ class DatabaseViewModel(private val repository: AppRepository) : ViewModel() {
                 )
             )
 
-            // pizza
+            // Insert sample menus for ownerId 2 (Pizza Go)
             repository.insertMenu(
                 Menu(
                     ownerId = 2,
@@ -220,7 +206,7 @@ class DatabaseViewModel(private val repository: AppRepository) : ViewModel() {
                     category = "MainDish",
                     description = "Classic pizza with tomato, mozzarella, and basil",
                     price = 8.99,
-                    image = ""
+                    image = "https://via.placeholder.com/400x300.png?text=Margherita+Pizza"
                 )
             )
             repository.insertMenu(
@@ -230,7 +216,7 @@ class DatabaseViewModel(private val repository: AppRepository) : ViewModel() {
                     category = "MainDish",
                     description = "Spicy pepperoni with mozzarella and tomato sauce",
                     price = 9.99,
-                    image = ""
+                    image = "https://via.placeholder.com/400x300.png?text=Pepperoni+Pizza"
                 )
             )
             repository.insertMenu(
@@ -240,31 +226,9 @@ class DatabaseViewModel(private val repository: AppRepository) : ViewModel() {
                     category = "Appetizer",
                     description = "Crisp romaine lettuce with Caesar dressing, croutons, and parmesan",
                     price = 6.50,
-                    image = ""
-                )
-            )
-            repository.insertMenu(
-                Menu(
-                    ownerId = 2,
-                    name = "Beef Burger",
-                    category = "MainDish",
-                    description = "Juicy grilled beef patty with lettuce, tomato, and special sauce",
-                    price = 10.75,
-                    image = ""
-                )
-            )
-            repository.insertMenu(
-                Menu(
-                    ownerId = 2,
-                    name = "Spaghetti Carbonara",
-                    category = "MainDish",
-                    description = "Spaghetti with creamy egg sauce, pancetta, and parmesan",
-                    price = 11.00,
-                    image = ""
+                    image = "https://via.placeholder.com/400x300.png?text=Caesar+Salad"
                 )
             )
         }
     }
-
-
 }

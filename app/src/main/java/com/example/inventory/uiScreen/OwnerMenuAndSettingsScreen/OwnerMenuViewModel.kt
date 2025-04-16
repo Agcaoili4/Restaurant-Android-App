@@ -1,64 +1,34 @@
 package com.example.restaurantapp.uiScreen.OwnerMenuAndSettingsScreen
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.inventory.data.Menu
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-data class MenuItem(
-    val id: Int,
-    val name: String,
-    val description: String,
-    val category: String,
-    val price: String,
-    val imageUrl: String
-)
-
 class OwnerMenuViewModel : ViewModel() {
+    // (Optional) In‑memory list of menus if needed.
+    private val _menuItems = MutableStateFlow<List<Menu>>(emptyList())
+    val menuItems: StateFlow<List<Menu>> = _menuItems.asStateFlow()
 
-    private val _menuItems = MutableStateFlow<List<MenuItem>>(emptyList())
-    val menuItems: StateFlow<List<MenuItem>> = _menuItems.asStateFlow()
+    // Holds the currently selected menu item.
+    val selectedMenu = mutableStateOf<Menu?>(null)
 
-    private var currentId = 0
-
-    fun addMenuItem(name: String, description: String, category: String, price: String, imageUrl: String) {
-        val newItem = MenuItem(
-            id = currentId++,
-            name = name,
-            description = description,
-            category = category,
-            price = price,
-            imageUrl = imageUrl
-        )
-        _menuItems.update { oldList -> oldList + newItem }
+    fun addMenuItem(menu: Menu) {
+        _menuItems.update { oldList -> oldList + menu }
     }
 
-    // (Optional) Function to update a menu item if needed later
-    fun updateMenuItem(
-        itemId: Int,
-        name: String,
-        description: String,
-        category: String,
-        price: String,
-        imageUrl: String
-    ) {
+    fun updateMenuItem(updatedMenu: Menu) {
         _menuItems.update { oldList ->
             oldList.map { item ->
-                if (item.id == itemId) {
-                    item.copy(
-                        name = name,
-                        description = description,
-                        category = category,
-                        price = price,
-                        imageUrl = imageUrl
-                    )
-                } else item
+                if (item.menuId == updatedMenu.menuId) updatedMenu else item
             }
         }
     }
 
-    fun getMenuItemById(itemId: Int): MenuItem? {
-        return _menuItems.value.find { it.id == itemId }
+    fun getMenuItemById(itemId: Int): Menu? {
+        return _menuItems.value.find { it.menuId == itemId }
     }
 }

@@ -1,50 +1,54 @@
 package com.example.restaurantapp.uiScreen.OwnerMenuAndSettingsScreen
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.inventory.DatabaseViewModel
 import com.example.inventory.data.Menu
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OwnerMenuAddScreen(
-    restaurantName: String = "restaurant name",
-    modifier: Modifier = Modifier,
-    onMenuAdded: () -> Unit = {},
-    onNavigateBack: () -> Unit = {},
-    onIncomingClicked: () -> Unit = {},
-    onManageClicked: () -> Unit = {},
-    onHistoryClicked: () -> Unit = {},
-    onSettingClicked: () -> Unit = {},
+    restaurantName: String = "My Restaurant",
+    ownerId: Int,
     databaseViewModel: DatabaseViewModel,
+    onMenuAdded: () -> Unit,
+    onNavigateBack: () -> Unit,
+    onIncomingClicked: () -> Unit,
+    onManageClicked: () -> Unit,
+    onHistoryClicked: () -> Unit,
+    onSettingClicked: () -> Unit
 ) {
-    var menuName by remember { mutableStateOf(TextFieldValue("")) }
-    var description by remember { mutableStateOf(TextFieldValue("")) }
-    var category by remember { mutableStateOf(TextFieldValue("")) }
-    var price by remember { mutableStateOf(TextFieldValue("")) }
-    var imageUrl by remember { mutableStateOf(TextFieldValue("")) }
+    val scope = rememberCoroutineScope()
+    val menuName = remember { mutableStateOf("") }
+    val description = remember { mutableStateOf("") }
+    val category = remember { mutableStateOf("") }
+    val price = remember { mutableStateOf("") }
+    val imageUrl = remember { mutableStateOf("") }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                title = { Text(text = restaurantName) }
-            )
-        },
+        topBar = { TopAppBar(title = { Text(restaurantName) }) },
         bottomBar = {
             OwnerBottomAppBar(
                 selectedIndex = 1,
@@ -56,55 +60,69 @@ fun OwnerMenuAddScreen(
         }
     ) { innerPadding ->
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+                .padding(20.dp)
         ) {
-            Text(
-                text = "Add new menu",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(bottom = 12.dp)
+            Text("Add New Menu", fontSize = 20.sp)
+            OutlinedTextField(
+                value = menuName.value,
+                onValueChange = { menuName.value = it },
+                label = { Text("Menu Name") },
+                modifier = Modifier.fillMaxWidth()
             )
-
-            FloatingLabelInput(menuName, "Menu name") { menuName = it }
-            FloatingLabelInput(description, "Description") { description = it }
-            FloatingLabelInput(category, "Category") { category = it }
-            FloatingLabelInput(price, "Price") { price = it }
-            FloatingLabelInput(imageUrl, "Image upload") { imageUrl = it }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
+            OutlinedTextField(
+                value = description.value,
+                onValueChange = { description.value = it },
+                label = { Text("Description") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = category.value,
+                onValueChange = { category.value = it },
+                label = { Text("Category") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = price.value,
+                onValueChange = { price.value = it },
+                label = { Text("Price") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = imageUrl.value,
+                onValueChange = { imageUrl.value = it },
+                label = { Text("Image URL") },
+                modifier = Modifier.fillMaxWidth()
+            )
             Button(
-                onClick = onMenuAdded,
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7B3C92)),
-                shape = RoundedCornerShape(50),
+                onClick = {
+                    val priceVal = price.value.toDoubleOrNull() ?: 0.0
+                    if (menuName.value.isNotBlank() && priceVal > 0.0) {
+                        val newMenu = Menu(
+                            ownerId = ownerId,
+                            name = menuName.value,
+                            category = category.value,
+                            description = description.value,
+                            price = priceVal,
+                            image = imageUrl.value
+                        )
+                        scope.launch {
+                            databaseViewModel.insertMenu(newMenu)
+                            onMenuAdded() // Navigate back (e.g., to list)
+                        }
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp)
+                    .height(48.dp),
+                shape = RoundedCornerShape(50),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7B3C92))
             ) {
-                Text("✓  Add menu", color = Color.White, fontSize = 16.sp)
+                Text("✓  Add Menu", color = Color.White, fontSize = 16.sp)
             }
         }
     }
-}
-
-@Composable
-fun FloatingLabelInput(value: TextFieldValue, label: String, onValueChange: (TextFieldValue) -> Unit) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(label, fontSize = 12.sp) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 12.dp),
-        singleLine = true,
-        shape = RoundedCornerShape(12.dp),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = Color(0xFFAAAAAA),
-            unfocusedBorderColor = Color(0xFFDDDDDD)
-        )
-    )
 }

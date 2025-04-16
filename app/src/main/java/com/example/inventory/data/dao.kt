@@ -1,10 +1,6 @@
 package com.example.inventory.data
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -15,8 +11,8 @@ interface OwnerDao {
     @Query("SELECT * FROM Owner")
     fun getAllOwners(): Flow<List<Owner>>
 
-    @Query("SELECT * FROM Owner WHERE email=:email ORDER BY ownerId DESC")
-    fun getOwnerByEmail(email:String): Flow<Owner?>
+    @Query("SELECT * FROM Owner WHERE email = :email ORDER BY ownerId DESC")
+    fun getOwnerByEmail(email: String): Flow<Owner?>
 }
 
 @Dao
@@ -27,10 +23,9 @@ interface CustomerDao {
     @Query("SELECT * FROM Customer")
     fun getAllCustomers(): Flow<List<Customer>>
 
-    @Query("SELECT * FROM Customer WHERE customerId=:customerId")
-    fun getCustomerById(customerId:Int): Flow<Customer>
+    @Query("SELECT * FROM Customer WHERE customerId = :customerId")
+    fun getCustomerById(customerId: Int): Flow<Customer>
 }
-
 
 @Dao
 interface MenuDao {
@@ -43,19 +38,15 @@ interface MenuDao {
     @Delete
     suspend fun deleteMenu(menu: Menu)
 
-//    @Query("SELECT * FROM Menu")
-//    fun getAllMenus(): Flow<List<Menu>>
-
-    @Query("SELECT * FROM Menu WHERE menuId=:menuId")
-    fun getMenuById(menuId:Int): Flow<Menu?>
+    @Query("SELECT * FROM Menu WHERE menuId = :menuId")
+    fun getMenuById(menuId: Int): Flow<Menu?>
 
     @Query("SELECT * FROM Menu WHERE ownerId = :ownerId AND category = :category")
-    fun getMenuByCategory(ownerId: Int,category:String): Flow<List<Menu>>
+    fun getMenuByCategory(ownerId: Int, category: String): Flow<List<Menu>>
 
-    @Query("SELECT * FROM menu WHERE ownerId = :ownerId")
+    @Query("SELECT * FROM Menu WHERE ownerId = :ownerId")
     fun getAllMenus(ownerId: Int): Flow<List<Menu>>
 }
-
 
 @Dao
 interface OrderDao {
@@ -71,11 +62,8 @@ interface OrderDetailDao {
     @Insert
     suspend fun insertOrderDetail(orderDetail: OrderDetail)
 
-    @Query("SELECT * FROM OrderDetail WHERE orderId=:orderId")
-    fun getAllOrderDetails(orderId:Int): Flow<List<OrderDetail>>
-
-
-
+    @Query("SELECT * FROM OrderDetail WHERE orderId = :orderId")
+    fun getAllOrderDetails(orderId: Int): Flow<List<OrderDetail>>
 }
 
 @Dao
