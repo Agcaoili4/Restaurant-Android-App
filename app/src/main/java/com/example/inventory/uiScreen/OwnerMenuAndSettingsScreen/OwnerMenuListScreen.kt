@@ -27,7 +27,6 @@ import coil.compose.AsyncImage
 import com.example.inventory.DatabaseViewModel
 import com.example.inventory.R
 import com.example.inventory.data.Menu
-import com.example.inventory.uiScreen.CustomerScreen.CustomerViewModel
 import com.example.restaurantapp.uiScreen.CustomerScreen.MenuItem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,6 +39,7 @@ fun OwnerMenuListScreen(
     onHistoryClicked: () -> Unit = {},
     onSettingClicked: () -> Unit = {},
     databaseViewModel: DatabaseViewModel,
+    onMenuUpdateClicked: (Menu) -> Unit,
 ) {
 
     val menus by databaseViewModel.menus(1).collectAsState(emptyList())
@@ -66,7 +66,7 @@ fun OwnerMenuListScreen(
                 .padding(innerPadding),
         ) {
             Button(
-                onClick =onMenuAdded ,
+                onClick = onMenuAdded,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
@@ -81,73 +81,65 @@ fun OwnerMenuListScreen(
                     .padding(8.dp)
             ) {
                 items(menus) { menu ->
-                    MenuItem(menu)
-                }
-            }
-        }
-    }
-}
-
-
-@Composable
-fun MenuItem(menu: Menu) {
-    ElevatedCard(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 1.dp
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(4.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp),
-        ) {
-            Row {
-                AsyncImage(
-                    model = menu.image,
-                    contentDescription = "Sushi",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .width(100.dp)
-                        .height(120.dp)
-                        .padding(end = 8.dp),
-                    error = painterResource(R.drawable.ic_broken_image)       // optional
-                )
-                Column {
-                    Text(
-                        text = menu.name,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Text(text = menu.description, maxLines = 2)
-
-                    Row(
+                    ElevatedCard(
+                        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .fillMaxSize(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                            .padding(4.dp)
                     ) {
-                        Text(
-                            text = "${menu.price}$",
-                            fontWeight = FontWeight.Bold,
+                        Column(
                             modifier = Modifier
-                        )
-                        IconButton(
-                            onClick = {/* Go to update screen */ },
-                            colors = IconButtonColors(
-                                MaterialTheme.colorScheme.primary,
-                                MaterialTheme.colorScheme.primaryContainer,
-                                Color.Black,
-                                Color.Black
-                            )
+                                .padding(16.dp),
                         ) {
-                            Icon(
-                                Icons.Filled.Edit,
-                                contentDescription = null
-                            )
+                            Row {
+                                AsyncImage(
+                                    model = menu.image,
+                                    contentDescription = "Sushi",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .width(100.dp)
+                                        .height(120.dp)
+                                        .padding(end = 8.dp),
+                                    error = painterResource(R.drawable.ic_broken_image)
+                                )
+                                Column {
+                                    Text(
+                                        text = menu.name,
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold
+                                    )
+
+                                    Text(text = menu.description, maxLines = 2)
+
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .fillMaxSize(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = "${menu.price}$",
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier
+                                        )
+                                        IconButton(
+                                            onClick = { onMenuUpdateClicked(menu) },
+                                            colors = IconButtonColors(
+                                                MaterialTheme.colorScheme.primary,
+                                                MaterialTheme.colorScheme.primaryContainer,
+                                                Color.Black,
+                                                Color.Black
+                                            )
+                                        ) {
+                                            Icon(
+                                                Icons.Filled.Edit,
+                                                contentDescription = "Edit menu"
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,8 +13,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -54,8 +58,6 @@ fun CustomerViewOrder(
 
     val orders by databaseViewModel.orderdetalis(currentOrderId).collectAsState(initial = emptyList())
 
-
-
     Scaffold(
         topBar = {
             RestaurantAppBar(tableNumber)
@@ -75,7 +77,6 @@ fun CustomerViewOrder(
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
             Column(modifier = Modifier.padding(8.dp)) {
-
 
                 Text(
                     text = "View Order",
@@ -106,8 +107,6 @@ fun CustomerViewOrder(
                             onClick = {
                                 currentOrder.forEach { o -> databaseViewModel.insertOrderDetail(o) }
                                 customerViewModel.resetOrderList()
-
-
                             },
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -118,6 +117,7 @@ fun CustomerViewOrder(
         }
     }
 }
+
 @Composable
 fun AllOrderList(
     order: List<OrderDetail>,
@@ -150,7 +150,7 @@ fun AllOrderListItem(
     ) {
         Text("${index.quantity}x")
         Column(modifier = Modifier.padding(horizontal = 5.dp)) {
-            MenuName(index.menuId,databaseViewModel)
+            MenuName(index.menuId, databaseViewModel)
             Text("Waiting...")
         }
     }
@@ -174,8 +174,6 @@ fun CurrentOrderList(
     }
 }
 
-
-
 @Composable
 fun CurrentOrderListItem(
     index: OrderDetail,
@@ -187,15 +185,17 @@ fun CurrentOrderListItem(
             .fillMaxWidth()
             .padding(4.dp)
     ) {
+        // Quantity and Menu Name
         Text("${index.quantity}x")
         Column(modifier = Modifier.padding(horizontal = 5.dp)) {
-
             var menu by remember { mutableStateOf<Menu?>(null) }
-            LaunchedEffect(index.menuId) {
-                menu = databaseViewModel.getMenuById(index.menuId)
-            }
+            LaunchedEffect(index.menuId) { menu = databaseViewModel.getMenuById(index.menuId) }
             Text(text = menu?.name ?: "Loading...")
-
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        // Remove button
+        IconButton(onClick = { customerViewModel.removeOrderListItem(index) }) {
+            Icon(Icons.Default.Delete, contentDescription = "Remove item")
         }
     }
     HorizontalDivider(thickness = 1.dp)

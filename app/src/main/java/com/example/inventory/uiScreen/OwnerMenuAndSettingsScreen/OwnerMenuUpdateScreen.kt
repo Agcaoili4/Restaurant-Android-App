@@ -16,26 +16,27 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OwnerMenuUpdateScreen(
-    restaurantName: String = "restaurant name",
-    modifier: Modifier = Modifier,
-    onDeleteClicked: () -> Unit = {},
-    onUpdateClicked: () -> Unit = {},
-    onNavigateBack: () -> Unit = {},
-    onIncomingClicked: () -> Unit = {},
-    onManageClicked: () -> Unit = {},
-    onHistoryClicked: () -> Unit = {},
-    onSettingClicked: () -> Unit = {}
+    menu: Menu,
+    databaseViewModel: DatabaseViewModel,
+    onNavigateBack: () -> Unit,
+    onDeleteCompleted: () -> Unit,
+    onUpdateCompleted: () -> Unit,
+    onIncomingClicked: () -> Unit,
+    onManageClicked: () -> Unit,
+    onHistoryClicked: () -> Unit,
+    onSettingClicked: () -> Unit
 ) {
-    var name by remember { mutableStateOf(TextFieldValue("")) }
-    var description by remember { mutableStateOf(TextFieldValue("")) }
-    var category by remember { mutableStateOf(TextFieldValue("")) }
-    var price by remember { mutableStateOf(TextFieldValue("")) }
-    var imageUrl by remember { mutableStateOf(TextFieldValue("")) }
+    // Initialize text fields with existing menu values
+    var name by remember { mutableStateOf(TextFieldValue(menu.name)) }
+    var description by remember { mutableStateOf(TextFieldValue(menu.description)) }
+    var category by remember { mutableStateOf(TextFieldValue(menu.category)) }
+    var price by remember { mutableStateOf(TextFieldValue(menu.price.toString())) }
+    var imageUrl by remember { mutableStateOf(TextFieldValue(menu.image)) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = restaurantName) },
+                title = { Text(text = "Edit Menu") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
@@ -54,7 +55,7 @@ fun OwnerMenuUpdateScreen(
         }
     ) { innerPadding ->
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = 20.dp, vertical = 12.dp),
@@ -62,7 +63,7 @@ fun OwnerMenuUpdateScreen(
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "Edit menu",
+                text = menu.name,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(bottom = 12.dp)
             )
@@ -80,7 +81,10 @@ fun OwnerMenuUpdateScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Button(
-                    onClick = onDeleteClicked,
+                    onClick = {
+                        databaseViewModel.deleteMenu(menu)
+                        onDeleteCompleted()
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                     modifier = Modifier.weight(1f)
                 ) {
@@ -88,7 +92,17 @@ fun OwnerMenuUpdateScreen(
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(
-                    onClick = onUpdateClicked,
+                    onClick = {
+                        val updated = menu.copy(
+                            name = name.text,
+                            category = category.text,
+                            description = description.text,
+                            price = price.text.toDoubleOrNull() ?: menu.price,
+                            image = imageUrl.text
+                        )
+                        databaseViewModel.updateMenu(updated)
+                        onUpdateCompleted()
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7B3C92)),
                     modifier = Modifier.weight(1f)
                 ) {

@@ -14,7 +14,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import androidx.navigation.NavType
 import com.example.inventory.data.Notification
+import com.example.inventory.data.Menu
 import com.example.inventory.uiScreen.CustomerScreen.CustomerViewModel
 import com.example.restaurantapp.uiScreen.CustomerScreen.CustomerMenuList
 import com.example.restaurantapp.uiScreen.CustomerScreen.CustomerPayment
@@ -210,17 +213,28 @@ fun RestaurantApp(
             )
         }
 
-        composable(route = RestaurantScreen.Owner_MenuUpdate.name) {
-            OwnerMenuUpdateScreen(
-                restaurantName = "My Restaurant",
-                onDeleteClicked = { navController.popBackStack() },
-                onUpdateClicked = { navController.popBackStack() },
-                onNavigateBack = { navController.popBackStack() },
-                onIncomingClicked = { navController.navigate(RestaurantScreen.Owner_Incoming.name) },
-                onManageClicked = { navController.navigate(RestaurantScreen.Owner_MenuAdd.name) },
-                onHistoryClicked = { /* Do nothing */ },
-                onSettingClicked = { navController.navigate(RestaurantScreen.Owner_Settings.name) }
-            )
+        // Menu update route with menuId argument
+        composable(
+            route = "${RestaurantScreen.Owner_MenuUpdate.name}/{menuId}",
+            arguments = listOf(navArgument("menuId") { type = NavType.IntType })
+        ) { backStack ->
+            val menuId = backStack.arguments?.getInt("menuId") ?: 0
+            val menuState = produceState<Menu?>(initialValue = null) {
+                value = databaseViewModel.getMenuById(menuId)
+            }
+            menuState.value?.let { menu ->
+                OwnerMenuUpdateScreen(
+                    menu = menu,
+                    databaseViewModel = databaseViewModel,
+                    onNavigateBack = { navController.popBackStack() },
+                    onDeleteCompleted = { navController.popBackStack() },
+                    onUpdateCompleted = { navController.popBackStack() },
+                    onIncomingClicked = { navController.navigate(RestaurantScreen.Owner_Incoming.name) },
+                    onManageClicked = { navController.navigate(RestaurantScreen.Owner_MenuAdd.name) },
+                    onHistoryClicked = { /* Do nothing */ },
+                    onSettingClicked = { navController.navigate(RestaurantScreen.Owner_Settings.name) }
+                )
+            }
         }
 
         composable(route = RestaurantScreen.Owner_Settings.name) {
@@ -240,7 +254,6 @@ fun RestaurantApp(
             )
         }
 
-
         composable(route = RestaurantScreen.Owner_MenuList.name) {
             OwnerMenuListScreen(
                 onMenuAdded = { navController.navigate(RestaurantScreen.Owner_MenuAdd.name) },
@@ -248,7 +261,10 @@ fun RestaurantApp(
                 onManageClicked = { /* already here */ },
                 onHistoryClicked = { /* optional */ },
                 onSettingClicked = { /* already here */ },
-                databaseViewModel = databaseViewModel
+                databaseViewModel = databaseViewModel,
+                onMenuUpdateClicked = { menu ->
+                    navController.navigate("${RestaurantScreen.Owner_MenuUpdate.name}/{${menu.menuId}}")
+                }
             )
         }
 
