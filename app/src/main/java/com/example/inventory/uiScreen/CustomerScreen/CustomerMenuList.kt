@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -142,11 +143,22 @@ fun CategoryTab(
             Column(modifier = Modifier.padding(end = 3.dp))
             {
                 FilterChip(
-                    onClick = {
-                        onOptionSelected(text)
-                    },
+                    onClick = { onOptionSelected(text) },
                     label = { Text(text) },
-                    selected = (text == selectedOption)
+                    selected = (text == selectedOption),
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = Color.White,
+                        labelColor = Color.Black,
+                        selectedContainerColor = Color.Black,
+                        selectedLabelColor = Color.White
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = text == selectedOption,
+                        borderColor = Color.Black,
+                        selectedBorderColor = Color.Black,
+                        disabledBorderColor = Color.LightGray
+                    )
                 )
             }
         }
@@ -215,8 +227,8 @@ fun MenuItem(menu: Menu, customerViewModel: CustomerViewModel) {
                 IconButton(
                     onClick = { customerViewModel.setOrderList(menu.menuId, 1) },
                     colors = IconButtonColors(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.colorScheme.onSecondaryContainer,
+                        MaterialTheme.colorScheme.onPrimary,
                         Color.Black,
                         Color.Black
                     )
@@ -230,13 +242,3 @@ fun MenuItem(menu: Menu, customerViewModel: CustomerViewModel) {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-

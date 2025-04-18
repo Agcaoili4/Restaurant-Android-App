@@ -16,6 +16,3 @@ data class CustomerUiState(
     val bottomBar: Int = 1,
     val currentPassword: String=""
 )
-
-
-

@@ -10,8 +10,10 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,9 +22,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.inventory.uiScreen.CustomerScreen.CustomerViewModel
-
 
 @Composable
 fun CustomerBottomAppBar(
@@ -35,44 +37,36 @@ fun CustomerBottomAppBar(
     LargeButtonIcon: ImageVector,
     viewModel: CustomerViewModel,
 ) {
-
     val uiState by viewModel.uiState.collectAsState()
-    var bottomBar = uiState.bottomBar
+    val bottomBar = uiState.bottomBar
 
-
-    var selectedItem by remember { mutableStateOf(0) }
-    val items = listOf("Call waiter","Menu", "View order", "Bill")
-    val selectedIcons =
-        listOf(Icons.Filled.Notifications, Icons.Filled.List, Icons.Filled.ShoppingCart, Icons.Filled.Check)
-    val unselectedIcons =
-        listOf(Icons.Outlined.Notifications, Icons.Filled.List, Icons.Outlined.ShoppingCart, Icons.Outlined.Check)
-    val onclick = listOf(onCallwaiterClicked,onMenuClicked, onViewOrderClicked, onBillClicked)
-
-    BottomAppBar(
-        actions = {
-
-
-
-            NavigationBar {
-                items.forEachIndexed { index, item ->
-                    NavigationBarItem(
-                        icon = {
-                            Icon(
-                                if (bottomBar == index) selectedIcons[index] else unselectedIcons[index],
-                                contentDescription = item
-                            )
-                        },
-                        label = { Text(item) },
-                        selected = bottomBar == index,
-                        onClick = {
-                            viewModel.setBottomBar(index)
-                            onclick[index]()
-                        }
-                    )
-                }
-            }
-
-        }
+    val items = listOf("Call waiter", "Menu", "View order", "Bill")
+    val icons = listOf(
+        Icons.Default.Notifications,
+        Icons.Default.List,
+        Icons.Default.ShoppingCart,
+        Icons.Default.Check
     )
-}
+    val onClicks = listOf(onCallwaiterClicked, onMenuClicked, onViewOrderClicked, onBillClicked)
 
+    NavigationBar(containerColor = MaterialTheme.colorScheme.background) {
+        items.forEachIndexed { index, label ->
+            NavigationBarItem(
+                icon = { Icon(imageVector = icons[index], contentDescription = label) },
+                label = { Text(label) },
+                selected = bottomBar == index,
+                onClick = {
+                    viewModel.setBottomBar(index)
+                    onClicks[index]()
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color.Black,
+                    selectedTextColor = Color.Black,
+                    unselectedIconColor = Color.Gray,
+                    unselectedTextColor = Color.Gray,
+                    indicatorColor = Color.Transparent
+                )
+            )
+        }
+    }
+}

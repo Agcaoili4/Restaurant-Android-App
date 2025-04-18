@@ -1,6 +1,7 @@
 package com.example.restaurantapp.uiScreen.OwnerMenuAndSettingsScreen
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,6 +26,7 @@ import com.example.inventory.data.Menu
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
+import com.example.inventory.theme.AppButton
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,7 +52,7 @@ fun OwnerMenuAddScreen(
     Scaffold(
         topBar = { TopAppBar(title = { Text(restaurantName) }) },
         bottomBar = {
-            OwnerBottomAppBar(
+            OwnerBottomAppBar (
                 selectedIndex = 1,
                 onIncomingClicked = onIncomingClicked,
                 onManageClicked = onManageClicked,
@@ -97,7 +99,7 @@ fun OwnerMenuAddScreen(
                 label = { Text("Image URL") },
                 modifier = Modifier.fillMaxWidth()
             )
-            Button(
+            AppButton(
                 onClick = {
                     val priceVal = price.value.toDoubleOrNull() ?: 0.0
                     if (menuName.value.isNotBlank() && priceVal > 0.0) {
@@ -111,17 +113,15 @@ fun OwnerMenuAddScreen(
                         )
                         scope.launch {
                             databaseViewModel.insertMenu(newMenu)
-                            onMenuAdded() // Navigate back (e.g., to list)
+                            onMenuAdded()
                         }
                     }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7B3C92))
+                    .height(48.dp)
             ) {
-                Text("✓  Add Menu", color = Color.White, fontSize = 16.sp)
+                Text("Add Menu", fontSize = 16.sp)
             }
         }
     }

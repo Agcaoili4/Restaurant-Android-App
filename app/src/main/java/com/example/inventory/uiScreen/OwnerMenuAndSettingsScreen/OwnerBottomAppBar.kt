@@ -40,8 +40,8 @@ fun OwnerBottomAppBar(
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color(0xFF7B3C92),
-                    selectedTextColor = Color(0xFF7B3C92),
+                    selectedIconColor = Color(0xFF000000),
+                    selectedTextColor = Color(0xFF000000),
                     unselectedIconColor = Color.Gray,
                     unselectedTextColor = Color.Gray,
                     indicatorColor = Color.Transparent

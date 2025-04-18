@@ -18,6 +18,8 @@ package com.example.inventory.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -60,6 +62,7 @@ private val LightColorScheme = lightColorScheme(
     surfaceTint = md_theme_light_surfaceTint,
     outlineVariant = md_theme_light_outlineVariant,
     scrim = md_theme_light_scrim,
+
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -91,17 +94,17 @@ private val DarkColorScheme = darkColorScheme(
     inversePrimary = md_theme_dark_inversePrimary,
     surfaceTint = md_theme_dark_surfaceTint,
     outlineVariant = md_theme_dark_outlineVariant,
-    scrim = md_theme_dark_scrim,
+    scrim = md_theme_dark_scrim
 )
+
 
 @Composable
 fun RestaurantAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    // Dynamic color in this app is turned off for learning purposes
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    // Define the color scheme based on the theme
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
@@ -112,6 +115,7 @@ fun RestaurantAppTheme(
         else -> LightColorScheme
     }
 
+    // Apply the status bar color based on theme
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -123,9 +127,25 @@ fun RestaurantAppTheme(
         }
     }
 
+    // MaterialTheme setup with color scheme
     MaterialTheme(
         colorScheme = colorScheme,
-//        shapes = Shapes,
-        content = content
+        content = { content() }
     )
+}
+
+@Composable
+fun ThemedButton(onClick: () -> Unit, text: String) {
+    val buttonColor = if (isSystemInDarkTheme()) md_theme_dark_button else md_theme_light_button
+    val buttonTextColor = if (isSystemInDarkTheme()) md_theme_dark_onButton else md_theme_light_onButton
+
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = buttonColor,
+            contentColor = buttonTextColor
+        )
+    ) {
+        androidx.compose.material3.Text(text = text)
+    }
 }

@@ -30,9 +30,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import com.example.inventory.DatabaseViewModel
 import com.example.inventory.data.Menu
 import com.example.inventory.R
+import com.example.inventory.theme.AppButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +75,7 @@ fun OwnerMenuListScreen(
                 .padding(8.dp)
         ) {
             item {
-                Button(
+                AppButton(
                     onClick = onMenuAdded,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -98,6 +101,10 @@ fun MenuItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp)
+            .graphicsLayer {
+
+                alpha = 0.85f
+            }
     ) {
         Row(
             modifier = Modifier

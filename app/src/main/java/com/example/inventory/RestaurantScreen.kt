@@ -26,7 +26,6 @@ import com.example.restaurantapp.uiScreen.OwnerMenuAndSettingsScreen.OwnerMenuVi
 import com.example.restaurantapp.uiScreen.OwnerMenuAndSettingsScreen.OwnerSettingScreen
 import com.example.restaurantapp.uiScreen.logInOwnerScreen.LoginScreen
 import com.example.restaurantapp.uiScreen.logInOwnerScreen.OwnerPasswordScreen
-import com.example.restaurantapp.uiScreen.logInOwnerScreen.SetRestaurantNameScreen
 import com.example.restaurantapp.uiScreen.logInOwnerScreen.TransitionScreen
 import com.example.restaurantapp.uiScreen.logInOwnerScreen.UserPreferences
 
@@ -72,7 +71,7 @@ fun RestaurantApp(
         navController = navController,
         startDestination = startDestination
     ) {
-        // Login / Setup Flow
+        // Login / Setup Flow - AJ Part
         composable(route = RestaurantScreen.Start.name) {
             LoginScreen(
                 context = context,
@@ -87,14 +86,16 @@ fun RestaurantApp(
                 customerViewModel = customerViewModel
             )
         }
-        composable(route = RestaurantScreen.SetRestaurantName.name) {
-            SetRestaurantNameScreen(
-                onNameSet = {
-                    userPreferences.setNewUser(false)
-                    navController.navigate(RestaurantScreen.Owner_Transition.name)
-                }
-            )
-        }
+
+        // Pre fixed app name removed the custom one
+//        composable(route = RestaurantScreen.SetRestaurantName.name) {
+//            SetRestaurantNameScreen(
+//                onNameSet = {
+//                    userPreferences.setNewUser(false)
+//                    navController.navigate(RestaurantScreen.Owner_Transition.name)
+//                }
+//            )
+//        }
         composable(route = RestaurantScreen.Owner_Transition.name) {
             TransitionScreen(
                 select = { selection ->
@@ -235,7 +236,7 @@ fun RestaurantApp(
         composable(route = RestaurantScreen.Owner_MenuUpdate.name) {
             val selectedMenu = ownerMenuViewModel.selectedMenu.value
             if (selectedMenu != null) {
-                OwnerMenuUpdateScreen(
+                OwnerMenuUpdateScreen (
                     restaurantName = "My Restaurant",
                     selectedMenu = selectedMenu,
                     databaseViewModel = databaseViewModel,

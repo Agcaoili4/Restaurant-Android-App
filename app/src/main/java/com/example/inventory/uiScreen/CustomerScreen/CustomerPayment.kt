@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.example.inventory.DatabaseViewModel
 import com.example.inventory.data.Menu
 import com.example.inventory.data.OrderDetail
+import com.example.inventory.theme.AppButton
 import com.example.inventory.uiScreen.CustomerScreen.CustomerViewModel
 import com.example.restaurantapp.uiScreen.components.CustomerBottomAppBar
 import com.example.restaurantapp.uiScreen.components.RestaurantAppBar
@@ -96,8 +97,10 @@ fun CustomerPayment(
                     verticalArrangement = Arrangement.Bottom
                 ) {
                     Row(modifier=Modifier.fillMaxWidth()) {
-                        Button(onClick = onPayClicked,modifier=Modifier.fillMaxWidth())
-                        { Text("Pay now") }
+                        AppButton(onClick = onPayClicked, modifier = Modifier.fillMaxWidth()) {
+                            Text("Pay now")
+                        }
+
                     }
                 }
 
