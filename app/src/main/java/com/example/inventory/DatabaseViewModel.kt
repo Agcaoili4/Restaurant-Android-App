@@ -1,19 +1,26 @@
 package com.example.inventory
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inventory.data.AppRepository
 import com.example.inventory.data.Customer
+import com.example.inventory.data.Favorite
 import com.example.inventory.data.Menu
 import com.example.inventory.data.Notification
 import com.example.inventory.data.Order
 import com.example.inventory.data.OrderDetail
 import com.example.inventory.data.Owner
+import com.example.inventory.data.OrderStatus
+import com.example.inventory.data.ReportGenerator
+import com.example.inventory.data.CSVExporter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class DatabaseViewModel(private val repository: AppRepository) : ViewModel() {
 
@@ -106,6 +113,66 @@ class DatabaseViewModel(private val repository: AppRepository) : ViewModel() {
     fun insertNotification(notification: Notification) {
         viewModelScope.launch {
             repository.insertNotification(notification)
+        }
+    }
+
+    // Favorites Query
+    val favorites = repository.getAllFavorites()
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    fun addFavorite(menuId: Int) {
+        viewModelScope.launch {
+            repository.addFavorite(Favorite(menuId = menuId, addedAt = System.currentTimeMillis()))
+        }
+    }
+
+    fun removeFavorite(menuId: Int) {
+        viewModelScope.launch {
+            repository.removeFavorite(Favorite(menuId = menuId, addedAt = 0L))
+        }
+    }
+
+    // Order Status Sync
+    private val _orderStatus = MutableLiveData<OrderStatus>()
+    val orderStatus: LiveData<OrderStatus> get() = _orderStatus
+
+    fun onOrderStatusUpdated(orderId: Int, status: OrderStatus) {
+        viewModelScope.launch {
+            if (isOnline()) {
+                _orderStatus.postValue(status)
+            } else {
+                repository.enqueueOrderStatus(orderId, status.name, System.currentTimeMillis())
+            }
+        }
+    }
+
+    init {
+        // Sync queued updates when online
+        viewModelScope.launch {
+            repository.getQueuedStatuses().collect { list ->
+                if (isOnline()) {
+                    list.forEach { queue ->
+                        _orderStatus.postValue(OrderStatus.valueOf(queue.status))
+                    }
+                    repository.clearQueuedStatuses()
+                }
+            }
+        }
+    }
+
+    private fun isOnline(): Boolean {
+        // Placeholder for real connectivity check
+        return true
+    }
+
+    // Report Generation
+    private val _csvReport = MutableLiveData<String>()
+    val csvReport: LiveData<String> get() = _csvReport
+
+    fun generateReport(forDate: LocalDate) {
+        viewModelScope.launch {
+            val report = ReportGenerator.generate(repository, forDate)
+            _csvReport.postValue(CSVExporter.export(report))
         }
     }
 

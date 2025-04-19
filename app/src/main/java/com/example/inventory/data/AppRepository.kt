@@ -9,7 +9,9 @@ class AppRepository(
     private val menuDao: MenuDao,
     private val orderDao: OrderDao,
     private val orderDetailDao: OrderDetailDao,
-    private val notificationDao: NotificationDao
+    private val notificationDao: NotificationDao,
+    private val favoriteDao: FavoriteDao,
+    private val orderStatusQueueDao: OrderStatusQueueDao
 ) {
 
     // Owner operations
@@ -41,5 +43,18 @@ class AppRepository(
     // Notification operations
     suspend fun insertNotification(notification: Notification) = notificationDao.insertNotification(notification)
     fun getAllNotification(): Flow<List<Notification>> = notificationDao.getAllNotifications()
+
+    // Favorites operations
+    suspend fun addFavorite(favorite: Favorite) = favoriteDao.addFavorite(favorite)
+    suspend fun removeFavorite(favorite: Favorite) = favoriteDao.removeFavorite(favorite)
+    fun getAllFavorites(): Flow<List<Favorite>> = favoriteDao.getAllFavorites()
+
+    // Order status queue operations
+    suspend fun enqueueOrderStatus(orderId: Int, status: String, timestamp: Long) =
+        orderStatusQueueDao.insertOrderStatusQueue(
+            OrderStatusQueue(orderId = orderId, status = status, timestamp = timestamp)
+        )
+    fun getQueuedStatuses(): Flow<List<OrderStatusQueue>> = orderStatusQueueDao.getAllStatuses()
+    suspend fun clearQueuedStatuses() = orderStatusQueueDao.clearAll()
 
 }

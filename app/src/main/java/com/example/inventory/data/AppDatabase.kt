@@ -6,8 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [Owner::class,Customer::class, Menu::class, Order::class, OrderDetail::class, Notification::class],
-    version = 4
+    entities = [Owner::class,Customer::class, Menu::class, Order::class, OrderDetail::class, Notification::class, Favorite::class, OrderStatusQueue::class],
+    version = 5
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -17,6 +17,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun orderDao(): OrderDao
     abstract fun orderdetailDao(): OrderDetailDao
     abstract fun notificationDao(): NotificationDao
+    abstract fun favoriteDao(): FavoriteDao
+    abstract fun orderStatusQueueDao(): OrderStatusQueueDao
 
 
     companion object {

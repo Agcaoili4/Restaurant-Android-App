@@ -53,3 +53,24 @@ data class Notification(
     val status: String,
 )
 
+@Entity
+data class Favorite(
+    @PrimaryKey(autoGenerate = true) val menuId: Int,
+    val addedAt: Long
+)
+
+@Entity
+data class OrderStatusQueue(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val orderId: Int,
+    val status: String,
+    val timestamp: Long
+)
+
+// Add order status enumeration
+enum class OrderStatus {
+    Accepted,
+    Preparing,
+    Ready
+}
+
