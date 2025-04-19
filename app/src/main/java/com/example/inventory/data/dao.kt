@@ -74,3 +74,15 @@ interface NotificationDao {
     @Query("SELECT * FROM Notification")
     fun getAllNotifications(): Flow<List<Notification>>
 }
+
+@Dao
+interface FavoriteDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addFavorite(favorite: Favorite)
+
+    @Delete
+    suspend fun removeFavorite(favorite: Favorite)
+
+    @Query("SELECT * FROM Favorite")
+    fun getAllFavorites(): Flow<List<Favorite>>
+}
