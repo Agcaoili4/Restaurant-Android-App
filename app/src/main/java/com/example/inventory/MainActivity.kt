@@ -26,7 +26,9 @@ class MainActivity : ComponentActivity() {
             db.menuDao(),
             db.orderDao(),
             db.orderdetailDao(),
-            db.notificationDao()
+            db.notificationDao(),
+            db.favoriteDao(),
+            db.orderStatusQueueDao()
         )
         viewModel = ViewModelProvider(this, DatabaseViewModelFactory(repository))
             .get(DatabaseViewModel::class.java)
